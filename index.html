@@ -1,0 +1,540 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h2>Build Room Reservation System using Sierra REST API</h2>
+					<br>
+					<p>2016 SCIUG Conference at Loyola Marymount University (Oct. 14)</p>
+					<p>
+						<small>Created by Seong Heon Lee, Systems & Technology Librarian</small> 
+						<small>Hugh & Hazel Darling Law Library, Chapman University </small>
+					</p>
+					<aside class="notes">
+				        Welcome everyone. Hi, My name is SeongHeon. I am Systems & Technology Librarian at Chapman University Law Library. First of all, thank you for being my audience. Today, I want to share about our summer project. We built a room reservation system using Sierra REST API. I hope that this session can be meaningful for you in some ways.   
+				    </aside>					
+				</section>
+				<section>
+					<p>Final Product</p>
+					<a href="#" class="navigate-down">
+						<img data-src="images/libcal_room.png" alt="LibCal Room Booking system">
+					</a>
+					<aside class="notes">
+						During the last summer, Law Library implemented a room reservation system. It tooks about 6-7 months including planning and preparations before summer. I will talk about the details of the whole project later in this session. We could finish the project before the start of this Fall semester. This screenshot shows our final outcome. The new room reservation system is currently running on a production server and serving law students everyday.
+					</aside>
+					<br>
+				</section>
+				<section>
+					<section>
+						<h2>Why Did We Start?</h2>
+						<p>An Email from David, Circulation Librarian </p>
+						<blockquote>"We notice a strange problem with the Law School’s Study Room Reservation module. <u>Apparently if you make a 1 session at 8am it will reserve the room for the entire day.</u> At any other time of the day you can make a 1 hour session with no problem. When you get a chance would you look into this?"</blockquote>
+						<aside class="notes">
+							Let me start with this question: Why did we start this project? One day (6/19/2015), I got an email from David, our circulation librarian. He notified me a strange problem that RRS reserves the entire day although selecting the first hour (8:00-9:00) only.<br><br>
+							 Our old system was a custom-made which IT developed specially for Law Library. There are Pros and Cons of using a custom-made system. One advantage is that we can locally customize the features and design as we wish. However, this advantage can become a drawback, because we are responsible for anything that is broken. <br><br>
+							 So, I emailed to Anthony in IT who was in charge. However, I received an automatic absense email from him. I could not reach him for next two days.       
+						</aside>
+					</section>
+					<section>
+						<h2>Reply to David</h2>
+						<blockquote>"Thanks David for the notification. Anthony seems out of office till 6/21. Will Keep you posted." </blockquote>
+						<br>
+						<aside class="notes">
+							 So, I replied to David. What a great email that I could send as a Systems & Technolgoy Librarian! I got a little frustrated, because I had never seen the system code and we could not access the person who should fix it for the next two days. 
+						</aside>
+					</section>
+					<section align="left">
+						<h3>... A Week After (6/25/2015)</h3>
+						<p>
+							<span>David: 
+								<span style="color:#33ff33">Okay it looks like the problem has been fixed. Also, it looks like Bill was the one who resolved it instead of Anthony. </span>
+							</span>
+						</p>
+						<p>
+							<span class="fragment fade-in" data-fragment-index="1">Me: 
+								<span style="color:#ff66ff">Great! Thanks for informing this. </span>
+							</span>
+						</p>
+						<br>
+						<aside class="notes">
+							A week later, David emailed me that the problem has been solved, but by Bill not by Anthony. Although I was so puzzled about what was going on behind the scene, I felt OK when I heard that the problem was fixed. <br><br>
+							[CLICK] So, I sent a thank note. 
+						</aside>
+					</section>
+					<section align="left">
+						<h3>... Two Weeks Later (7/10/2015)</h3>
+						<p>
+							<span>David: 
+								<span style="color:#33ff33">It looks like there is another problem. I don’t know if this is related to the problem we had before. It seems if you make a reservation that ends at 10pm, it will not show the reservation for the last hour. </span>
+							</span>
+						</p>
+						<p>
+							<span class="fragment fade-in" data-fragment-index="1">David emailed to IT to check the problem. 
+							</span>
+						</p>
+						<aside class="notes">
+							Two weeks later, David emailed me again that there was another problem. For some reasons, the last 'reserved' hour display as not-reserved. How is this possible? What's going on?<br><br>
+							 [Click] And David emailed to IT to check the problem. 
+						</aside>
+					</section>
+					<section align="left">
+						<h2>... A Week Later (7/16/2015)</h2>
+						<p>
+							<span>Me: 
+								<span style="color:#ff66ff">Did IT fix this problem?</span>
+							</span>
+						</p>
+						<aside class="notes">
+							A week later, I emailed to David to ask if IT took care of the problem. The answer was not yet. 
+						</aside>
+					</section>
+					<section align="left">
+						<h3>... Another Week Later (7/23/2015)</h3>
+						<p>
+							<span>David: 
+								<span style="color:#33ff33">Anthony, do you know the status of this case?</span>
+							</span>
+						</p> 
+						<aside class="notes">
+							Another week later, David emailed to IT to get status update. 
+						</aside>
+					</section>
+					<section align="left">
+						<h3>... Another Two Weeks Later (8/7/2015)</h3>
+						<p>
+							<span>Me: 
+								<span style="color:#ff66ff">Did IT fix the problem? </span>
+							</span>
+						</p>
+						<p>
+							<span class="fragment fade-in" data-fragment-index="1">David: 
+								<span style="color:#33ff33">Not yet. Anthony said that he would get back to me past Monday, but I didn’t hear from him.  </span>
+							</span>
+						</p>
+						<aside class="notes">
+							Another two weeks later, I asked David about the status. [Click] And he told that the problem had not been resolved yet. We were getting tired, losing patience.  
+						</aside>
+					</section>
+					<section>
+						<h2>... A semester started, <br> while the system was still broken</h2>
+						<aside class="notes">
+							[Read] Our law school semester starts 2 or 3 weeks earlier than our main campus. So, we can be badly affected if we are caught up in a wrong maintanence cycle. This was exactly the case. The last reserved hour still shows "not-reserved".    
+						</aside>
+					</section>
+					<section align="left">
+						<h3>... About a month later (Sep. 21)</h3>
+						<img class="fragment fade-in" data-fragment-index="1" data-src='./images/error_screen.png'>
+						<aside class="notes">
+							About a month later, we see this screen. [Click] The prevous problem was kind bearable. But, this was not. Users cannot access to the system as such. I contacted IT to find the cause of the problem. 
+						</aside>
+					</section>
+					<section>
+						<h3>Email from IT</h3>
+						<blockquote>
+							Would you write <span style="color:#ff0000">STEP-BY-STEP</span> procedure of making a reservation? 
+						</blockquote>
+						<aside class="notes">
+							 This is the email reply that I received from IT. [Read] What? Really? My frustration level was growing. You can understand me if you had the same experience: how hard is it to write descriptively with details when you get completely emotional. <br><br>
+
+							 Calm down! Breathe! I sent a STEP-By-STEP process with sceenshots. Finally, we found that this error happened when IT changed our ID Management System from Datatel to PeopleSoft. Our Room Reservation System was using Datatel system to check user credentials.     
+						</aside>
+					</section>
+					<section>
+					<h2>Summary of the Story</h2>
+					<h3 class="fragment fade-in" data-fragment-index="1">Manage Library Technology</h3>
+					<br>
+					<h1 class="fragment fade-in" data-fragment-index="1" style="color:#ff66ff"> Internally</h1>
+					<h2 class="fragment fade-in" data-fragment-index="1">vs.</h2>
+					<h1 class="fragment fade-in" data-fragment-index="1" style="color:#33ff33">Outsourcing</h1>
+					
+					<aside class="notes">
+						Why do I share this story? It is not my intention to talk about the inefficiency of IT support. Chapman IT Department had big overhaul last year, migrating Campus Resoruce System, re-structuring staffing, etc. They are reasoanble excuses. [Click] The reason that I bring this story is to question about system management process: Are you going to manage library technology INTERNALLY or with OUTSOURCING?  <br><br>
+
+						I don't thnik that there is ONE answer for this question, because our contexts are all varied, such as university policy, staff skills and size, communication channel, project delegation process, etc. <br><br>
+
+						But certainly, our last summer exprience convinced me that we needed a reasonable control on our own services. In this way, we are not affected helplessly by outside factors which we cannot handle. As you heard from the story, it was really difficult for library staff to know the behind scene: we could not see the codebase of the system; we could not know who were on duty for our service ticket; we could not see why and when our system got affected.  
+				    </aside>
+				</section>
+				<section>
+					<h1>So, we questioned:</h1>
+					<h1 style="color:#33ff33">Do we need a new system?</h1>
+					<aside class="notes">
+						[Read]	
+					</aside>
+				</section>
+			</section>	
+			
+			<section>
+				<h2>How Did We Start?</h2>
+				<p>First, disucss available options.</p>
+				<p>Three options:</p>
+				<ol>
+					<li>Fix it</li>
+					<li>Leatherby's</li>
+					<li>Other Alternatives</li>
+				</ol>
+				<aside class="notes">
+					How did we start? We were natually in the position to start discussing about the future of our RRS. We spent the whole semester of Fall 2015 for that discussion. There were three options that we can consider to pursue. <br><br>
+
+					The First option was to fix it. However, we excluded this option, when we found that the broken template issue (first and last hours were not display correctly) was related to a third-party calendar view component. The programmer explained that he coult not make it work because of unknown changes of the templates. I could not see the whole pictures. However, I could certainly get a sense that there were some degeneration of the application. The promgrammer could not only resolve the error but also he did not have time to fix the problem. Our study room reservation systems was not high priority, particuarlly in that summer when lots of new changes happened in IT. In result, library staff agreed to move onto another system. <br><br>
+
+					The second natural option was to share Leatherby's (our main library's). Before our Room Reservation System had troubles, there were several occasions that we updated small parts and features. Because the main libary had its own room booking system and a circulation librarian encouraged us to join their system, we thought that it could be a good option. This could be good with two reasons: first, we don't need to ask IT to maintain our system. Second, IT does not need to support two different systems. That's definitely good news for IT. So. Law Librarians met Leatherby's staff to check if the system would be sufficient to support all our needs. We were mostly convinced with the features. Although we had to tweak a little bit here and there, overall, it looked reasoable for both of us. <br><br>
+
+					However, our Library Director wants to find more options before our final decision. Even though our old system had many troubles, there was one thing that we really liked about: that was -  the fact that we could locally customize as we like. This is a kind important if we want to customize a system user-friendly. For example, using Leatherby's, our law student should step through a few clicks before landing on actual reservation page. And we also concerned about possible cases that we may need to run different policies/rules. Sharing the same system means that we need to compromise in such conflicting cases. So, we decided to search for other alternatives that we can freely run our policy, operations, design, etc.           
+				</aside>
+			</section>
+			<section>
+				<h3>LibCal as a Candidate</h3>
+				<img src="./images/libcal.png">
+				<aside class="notes">
+					In Feb. 2016, our library director was informed from law library director listserve that LibCal is a good product. And she wanted me to check it.            
+				</aside>
+			</section>
+			<section>
+				<h2>Testing LibCal</h2>
+				<ul>
+					<li>Intuitive and flexible Admin Pages and Features</li>
+					<li>Bundled with other sister products, such as calendar, appointment</li>
+					<li>Booking widgets embeddable on other websites</li>
+					<li>Limit access by domains (e.g. @mail.chapman.edu)</li>
+					<li>User authentication module, LibAuth</li>
+					<li>Reliable Supports: users and software</li>
+				</ul>
+				<aside class="notes">
+					I signed up Libcal trial to test its functions. I was personally impressed by clean design and powerful featuers. LibCal was a good candidate for our library. Most importantly, LibCal would provide the chance of customizing our design and policies. These are some highlights of LibCal. [Read] <br><br>
+
+					However, there was one critial problem remained. We should implement an User Authorization.  
+				</aside>
+			</section>
+			<section>
+				<h2>User Authorization</h2>
+				<ol>
+					<li>Open login (default): name and email</li>
+					<li>Restricting by domain: @mail.chapman.edu</li>
+					<li>Third-Party Integration: Shibboleth, LDAP, SAML, CAS, SIP2, and <span class="fragment highlight-green" data-fragment-index="1">a remote self-hosted script option</span> </li>
+				</ol>
+				<aside class="notes">
+					Because Law Library allows only law students to sign in the Room Reservation System, we must have a login procedure to authenticate law students only. So, I check the login options of LibCal with testing it and reading the product website. I learned that there are three options. LibCal,by default, is open to all users as long as they have a name and an email. Secondly, LibCal can limit access by email domains like @mail.chcapman.edu. However, this option would still allow all Chapman students to access to the system. And finally, other third party options like LDAP are available. However, we could not integrate LDAP with LibCal, because Chpaman LDAP did not recognize "LAW" students. It was kind a bummer, because all other features had already passed my criteria. User Authorization problem appeared as a deal breaker. <br><br>
+
+					[Click] Howevever, I was curious about the statement "a remote self-hosted script option". I emailed to SpringShare to check what they mean by the phrase.   
+				</aside>
+			</section>
+			<section>
+				<h2>Remote Self-Hosted Script</h2>
+				<p align="left">"The self-hosted option is for if you have a custom configuration that's not covered by the other options. What we do is POST the username and password to a remote URL you host. We recommend that the authentication returns json formatted like..." </p>
+				<pre><code data-noescape>
+				{
+				"firstname":"James",
+				"lastname":"Bond",
+				"email":"jbond@007.com",
+				"auth":true
+				}
+				</code></pre>
+				<aside class="notes">
+					SpringShare emailed me back with an explanation. [Read] Translating this English email, they simply meant an Web App which can receive a POST request from LibCal and return a user record.<br><br>
+
+					When I read this reply, Sierra REST API immediately came accros to my mind. This kind of WebApp is exactly what Sierra REST APIs were designed for.    	
+				</aside>
+			</section>
+			<section>
+				<h2>Sierra REST APIs</h2>
+				<img src="./images/libcal_sierra.png">
+				<aside class="notes">
+					Sierra REST APIs has Patron Find API. Provided with a barcode number, the Patron Find API will return a patron record with name, email, and more. <br><br>
+
+					A simple diagram of architecture is like this. When a user sign in a study room on LibCal site, the LibCal has to authorize the user first. So, LibCal passes a user request to Sierra REST API. Then, Sierra REST API finds a patron record and return it back to LibCal. Once all authorization steps are settled, LibCal serves the user. <br>
+				</aside>   
+			</section>
+			<section>
+				<h2>Web App</h2>
+				<img src="./images/libcal_sierra2.png">
+				<aside class="notes">
+					However, we need one more application layer for this system desgin to work. Because Sierra REST API does not return patron data in the format that LibCal required, we need a Web App that can handle the middle process between LibCal and Sierra REST APIs.      	
+				</aside>
+			</section>
+			<section>
+				<h2>What does the Web App do?</h2>
+				<img src="./images/webApp.png" align="left">
+				<ol style="font-size:25px">
+					<li class="fragment fade-in" data-fragment-index="1">Receive an user request from LibCal</li>
+					<li class="fragment fade-in" data-fragment-index="2">Pass the user request to Sierra REST API</li>
+					<li class="fragment fade-in" data-fragment-index="3">Receive user data from Sierra REST API</li>
+					<li class="fragment fade-in" data-fragment-index="4">Process user data in the format that LibCal requires</li>
+					<li class="fragment fade-in" data-fragment-index="5">Return user data to LibCal</li>
+				</ol>
+				<aside class="notes">
+					Let's dissect more closely the functions of the Web App itself. [Read] Those five steps are implemented in this code. 
+				</aside>
+			</section>
+			<section>
+				<h3>Code View of Each Step</h3>
+				<img src="./images/function1.png">
+				<aside class="notes">
+					First, setup an URL path (isPatron) in the WebApp to which LibCal will send a Post request. LibCal also send both username(email) and password(barcode). The WebApp converts both inputs into variables for the next steps. <br><br>
+					Second, the WebApp passes the barcode to Sierra REST API to request a patron record. At the same time, the Web App requests a query selecting only a few fields (names, emails, barcodes, patronType). <br><br>
+					Third, Sierra REST API will find a user record and send it back to the WebApp. The WebApp will receive the data in the response 'body'. <br><br>
+					Fourth, after receiving a user record, the WebApp will confirm if the patron is 14 (law student) and username(email) is matching. If a user is valid, the response data will be processed into the json format as in yellow box (firstname, lastname, email, auth in JSON format).  <br><br>
+					Fifth, finally, the WebApp will send the processed data back to LibCal.<br>  
+				</aside>
+			</section>
+			<section>
+				<h2>Behind the Project</h2>
+				<ul>
+					<li>A Short Code with Patron Find API</li>
+					<li class="fragment fade-in" data-fragment-index="1">No access to Patron Find API till the 28th of July 2016</li>
+					<li class="fragment fade-in" data-fragment-index="2">Patron Find API available with Sierra 2.2</li>
+					<li class="fragment fade-in" data-fragment-index="3">Sierra's full OS upgrade </li>
+					<li class="fragment fade-in" data-fragment-index="4">Developer Sandbox</li>
+					<li class="fragment fade-in" data-fragment-index="5" style="color:#33ff33">Local Custom Patron API</li>
+				</ul>
+				<aside class="notes">
+					Now let me step back a little bit to share the behind stories of the project. <br><br>
+					First, the short code shown in the previous screen (around 40 lines) covers all the core functionalities of the WebApp that integrates Sierra REST API with LibCal. There are some extra codes like getting an Access Token. However, that is pretty much all of it. <br><br>
+					[Click] However, I could not write this code in the beginning of our project, because we didn't have access to the Patron/Find API till the 28th of July 2016. <br><br>
+					[Click] Patron/Find API is shipped with Sierra 2.2. Chapman University had Sierra 2.1 at the moment of preparing our project. Eventually, we had a plan for Sierra upgrade (2.1 to 2.2) in early June (before summer). I thought to build the code after that upgrade. <br><br>
+					[Click] However, an unexpected thing hanppened, as always. This time, the Sierra upgrade required a full Linux OS upgrade as a prerequisite. Because we could not guarantee how soon Innovative could upgrade OS on our Server, our Sierra upgrade schedule seemed falling into a black hole.<br><br>
+
+					Remember that we launched the real product WebApp two weeks after (August 10) we could access to Patron Find API. How could I work around the schedule conflict? [Click] This is how I did. After realizing that our Sierra upgrade will be delayed, I decided to prototype the WebAPP interacting with Developer Sandbox, which was including Patron/Find API at that time. Usually, Developer Sandbox runs the latest version so that it is a great place to expriment new APIs recently released. The Developer Sandbox is specially helpful if your Sierra is an old version.<br><br>
+
+					[Click] Meantime, I encounterd one important question. What would happen if we could not upgrade to Sierra 2.2 before our semester starts? Although the prototyped WebWep can work with the Developer Sandbox, it would not do so with our Sierra Server. It looked like kind of gamble that we were helplessly waiting for an unknown OS upgrade schedule. So, I decided to build up a Local Custom Patron API.  
+				</aside>
+			</section>
+			<section>
+				<h2>A Custom Patron API</h2>
+				<img src="./images/customApi.png">
+				<aside class="notes">
+					This is the diagram of Local Custom Patron API. First of all, the WebApp extracts patron records from Sierra PostgreSQL. And then, the WebApp stores them locally in the web application server. In this design, when LibCal requests a patron data, the WebApp sends a patron record directly from its own server, without delegating the request to Sierra. 
+				</aside>
+			</section>
+			<section>
+				<h2>Extract data (law students) from Sierra PostgreSQL</h2>
+				<img src="./images/extractData.png">
+				<aside class="notes">
+					Let's break down a little bit in details. First, it extracts law student records from Sierra Databases. Sierra Database is approchable through Sierra Direct SQL Access. I use KNEX library when communicating with our local PostgreSQL database. KNEX is a JavaScript library of SQL query builder, which works with major databases such as PostgreSQL, MySQL, MSSQL, SQLite.<br><br>
+					Second, it stores patron data into a json file inside the web applcation. The json file will work exactly like a data storage.  
+				</aside>
+			</section>
+			<section>
+				<h2>Send data to LibCal</h2>
+				<img src="./images/customApi2.png">
+				<aside class="notes">
+					Next, this is a breakdown of the interaction between LibCal and the WebApp. After receiving a patron request, the WebApp reads the JSON file to find a patron. Then, after formatting the patron record as LibCal requires, the WebApp sends it back to LibCal. The code in this screen and in the previous one provides all functionalities for the Local Custom Patron API. 	
+				</aside>
+			</section>
+			<section>
+				<h2>Accidental Invention</h2>
+				<h2 class="fragment fade-in" data-fragment-index="1" style="color:#00ff00">Custom Patron API <br> AS <br> Offline Service</h2>
+				<aside class="notes">
+				On the 28th of July, two weeks before this semester started, we could eventually upgrade to Sierra 2.3. I could finally access to Patron Find API. In spite of tight schedule, I could quickly complete the WebApp because of the the prototype that I had already built using the Developer Sandbox. In the meantime,the Local Custom Patron API I built had no use anymore, although I had a good idea on how we are using it. Imagine what will happen when Sierra Server fails. This is not something that would frequently happen. But it is still possible. Because Sierra REST APIs are running on Sierra Application Server, the WebApp will not authenticate patrons if Sierra Server does not work. <br><br>
+
+				[Click] What about using the Local Custom Patron API in Offline? (Pause!!)
+				</aside>
+			</section>
+			<section>
+				<h2>Offline Service</h2>
+				<img src="./images/offlineService.png">
+				<aside class="notes">
+					What do I mean by "Offline Service"? Let's see the diagram again. Even though the WebApp does not access to Sierra REST API or Sierra Database, the WebApp can still serve without problem. Because it contains patron records inside, it can respond to LibCal with a patron record. Without a connection to Sierra API, the Local Custom Patron API can still perform its duty. So, I decide to use it when Sierra Server is down. It is an accidental invention. It's kind cool. 
+				</aside>
+			</section>
+			<section>
+				<h2>Go Live!</h2>
+				<img src="./images/stacks.png">
+				<aside class="notes">
+					The WebApp is completed. What is the next step? We have to run it on a production server. Technology stacks that I chose for the WebApp are Node.Js and Express.Js. Node.Js is a server-side JavaScript environment, on which we can run a web application. Express.Js is a Web Application Development Framework for Node.JS. I developed the WebApp using Express.JS. Node.JS can work as a standalone webserver. However, it is usually integrated with traditional web server in production (e.g. Apache, Nginx, IIS-Windows Web Server), because it can serve static pages better and does not need a separate process manager like PM2. I used a third-party module, "IISNODE" which will link a node.js application to IIS web server. Before this summer, I prepared a window server with IT Department and configured both IIS web server and IISNODE module, so that we could deploy our production app as soon as it was ready.  
+				</aside>
+			</section>
+			<section>
+				<h2>Development vs Production</h2>
+				<h2><span style="color:#00ff00">4</span> Second Timeout Issue</h2>
+				<p class="fragment fade-in" data-fragment-index="1">Don't expect that your code in the development environment works in the same way that it works in the production server.
+					<ul class="fragment fade-in" data-fragment-index="2">
+						<li>Unknown rules: 4 second timeout</li>
+						<li>IIS Process Recycling</li>
+						<li>their party apps: Virus-Scanning</li>
+					</ul> 
+				</p>
+				<h2 class="fragment fade-in" data-fragment-index="3" style="color:#00ff00">Automatic request script</h2>	<aside class="notes">
+					When we deployed our application for production, it looked working well. I tested user login serveral times every day manually with a dummy student account. However, I discovered soon one strange problem. Every first-time login in the morning failed. And then everything works fine for the rest of day. I started chasing the cause of the problem. I discovered that the error was related to a "timeout"" issue. I was curious why and where this timeout occured. Speaking with SpringShare development team, I learned that LibCal disconnected automatically its request if our WebApp did not respond in 4 seconds. This is a security feature of LibCal/LibAuth. After the disconnection, the WebApp had no way to communicate anymore with LibCal regarding that request. This means that each request must be answered within 4 seconds without any delay.<br><br>
+
+					However, it was weird because the timeout only happened one time in the morning. Searching various possiblities, I found that the issue was IIS web server. The web server recyled once a day the process on which the WebApp was running. In addition, overnight scheduled virus-scanning also made the process recycled. After the process recycled, the process took some warming-up time when restarting. When the first request came in after the process recyle, the warming-up time took more than 4 seconds. That's why the first-time login failed. <br><br>
+
+					[Click] The lesson that I learned: Do not expect that the code in the development environment works in the same way that it works in the production. [Read]. [Click] My solution for this issue was to create an automatic request script. <br><br>
+
+					I wrote a short PowerShell script that sends a dummy request every hour.  The script has two purposes: first, warming up the server after the process recyle and second, monitoring if the server is still running on. <br>
+				</aside>
+			</section>
+			<section>
+				<h2>Monitoring the App on Server</h2>
+				<p>
+					<ul>
+						<li>Who access?</li>
+						<li>Requestor IP</li>
+						<li>Response Time</li>
+						<li>Simple View for Quick Review</li>
+					</ul>
+				</p>
+				<aside class="notes">
+					Last but not least, we need a monitoring system to check the actitivies of the Web App on the server. I was particularly interested in who's accessing, requestor IPs, and resonse time. Of course, it must be easy to review quickly.  
+				</aside>
+			</section>
+			<section>
+				<h2>IIS Web Server Logs</h2>
+				<img src="./images/iislog.png">
+			<aside class="notes">
+				IIS log files include many information (15 fields); Obviously, I did not need all. And it is also hard to read because of different length of each line, not pretty indented and aligned. So, I wrote a small python script which extracts only necessary fields from the original log files.    
+			</aside>
+			</section>
+			<section>
+				<h2>Code of Log Analyzer</h2>
+				<img src="./images/logAnalyzer.png">
+				<aside class="notes">
+					First, it extracts only 9 fields. Seond, it color-codes the requests from LibCal to distinguish them from other requests. All LibCal requests will be stylized in blue font, except any request caught in 4 second timeout rule. They will appear in red font. Third, it marks other requests bold if they are caught in 4 second timeout. This will catch the request coming from PowerShell which warms up the web server after the process recycle.  	
+				</aside>
+			</section>
+			<section>
+				<h2>Log Looks Like</h2>
+				<img src="./images/analyzerLog.png">
+				<aside class="notes">
+					The simplified log file looks like this. As you see, readability gets improved. We can quickly scan all requests, because each request is aligned in pretty format. The requests in Blue-color are all from LibCal. Blue means that they pass 4 second timeout rule. Good part is that I don't need to read the response time of each request (which is in red box) line by line. And bold means that it failed 4 second timeout rule. We see one request at 11:00 (UTC, 4:00 PT). This request comes from PowerShell Script right after the process recycle every early morning. Because this request will warm up the WebApp's process and make it ready to serve next logins, the users will not exprience any failure of login.<br><br>
+
+					One more thing I have to mention is that the python cript auto-runs in background once a day. So, I do not need to run it myself, unless I really need to check the latest requests. 
+				</aside>
+			</section>
+			<section>
+				<h2>REST API</h2>
+				<ul>
+					<li><u style="color:#00ff00">Re</u>presentational <u style="color:#00ff00">S</u>tate <u style="color:#00ff00">T</u>ransfer</li>
+					<li class="fragment fade-in" data-fragment-index="1"><u>Web Architectural Style</u> with 6 contraints: client-server, stateless, cashable, uniform interface, layered system, and code on demand</li>
+				</ul>
+				<br><br>
+				<ol>
+					<li class="fragment fade-in" data-fragment-index="2">Separation of Concerns (client vs server)</li>
+					<li class="fragment fade-in" data-fragment-index="3">Stateless (No meddling each other)</li>
+					<li class="fragment fade-in" data-fragment-index="4">HTTP Protocol (Get, Post, Put, Delete)</li>
+				</ol>
+				<aside class="notes">
+					So far, I have talked about why and how we built a Room Reservation System. Before closing this session, let me briefly touch upon REST API. With purpose, I arrange this part at the end of my talk. Because we have already seen some real examples, it will be much easier to grasp its concept. What is REST API? Why is it so a buzzword today?  <br><br>
+
+					REST stands for "Respresentational State Transfer". That's a big phrase. The word was first coined by Roy Fieding in his doctoral dissertation Chapter 5 (UCI). [Click] He defined REST as a Web Architectural Style which is characterized with six contraints, such as client-server, stateless, cashable, uniform interface, layered system, and code on demand. Lots of words. <br><br>
+					[Click] Let me hightligh three key concepts. First, the fundemental key concept is separating the concerns of client from the concerns of server. Client conerns user interface, while servers concerns about data resource. Separating their own concerns will make web achitecture more scalable because each components (client and server) can evolve independently. [Click] Because of this separation, Client and Server do not meddle with each other. They do not impose their own condition(state) onto the other. [Click] Thirdly, REST uses HTTP protocol and its verbs (GET, POST, PUT, DELTE), which are already familar to web community. This makes REST implementation simple and familiar. Let's look at a picture to help our understanding. 
+				</aside>
+			</section>
+			<section>
+				<h2>Representation & Resource</h2>
+				<img src="./images/RESTAPI.png">
+				<aside class="notes">
+					As you see, Client and Server interact with each other. Notice that they have their own concerns (User Interface vs Data Resource). The Client sends a request to the Patron Find API Endpoint with parameters. An endpoint is the place that the Server promises to serve a certain type of resource, in this case, Patron Find Resource. And parameters present which resource the Client wants to get. Here, parameters are specified by a bacode and selected fields. Both Endpoint URL and parameters make a URI (Resource Identifier). Then, the Server receives the URI request and respond "a resource". We call this 'A resource' a representation of resource or STATE. Notice that this representation is purely created by the Client's decision (with parameters). The Server itself has nothing to do with the "state". The Server just serve all possible resources at Patron Find Endpoint; the Client consumes a specific patron record at the endpoint using parameters. 
+				</aside>
+			</section>
+			<section>
+				<h2>REST and Buffet</h2>
+				<img src="./images/buffet-rest.jpg">
+				<h3 class="fragment fade-in" data-fragment-index="1">food <span style="color:#00ff00">(resources)</span> are served at the bars <span style="color:#00ff00">(endpoints)<span></h3>
+				<aside class="notes">
+					This is an easy analogy. You are familiar with how buffet restaurant works. Chelfs prepare sets of foods and display them at the bars. And the customers choose the food at the bars which they like to eat. Chelfs do not take direct orders from consumers, although Chelfs select the dishes based on their study of customers' tastes. And the customers cannot complaint about why Chelfs cook in a certain styles and why some foods are not provided. Here, we can find clear sepration between the Chelfs and the customers. This will improve the efficiency of preparing foods. Although the customers cannot make an order directly, they have pretty good enough choices at the bars. They can choose the foods with their current state of mind. Interestingly enough, Chelfs do not decide the state of customer taste. That decision is all up to customers. [Click] Chelfs and customers never talk each other directly. However, food (resource) are served at the bars (endpoints). 
+				</aside>
+			</section>
+			<section>
+				<h2>Sierra Developer Sandbox</h2>
+				<a href="https://sandbox.iii.com/iii/sierra-api/swagger/index.html" target="_blank"> <img src="./images/developer-sandbox.png"></a>
+				<aside class="notes">
+					Let's take a look at a real Sierra REST API. This is Sierra Developer Sandbox. <br> 
+
+					
+					I will demo Patron Find API. First, we need to select the right endpoint. And then we create parameters (barcode = 48103853072715747, fields = emails,names,patronType). 
+					When we request a resource, the Server returns a body which is the representation of resource (state).
+				</aside>
+			</section>
+			<section>
+				<h2>Other REST APIs</h2>
+				<ul>
+					<li><a href="https://developers.facebook.com/docs/graph-api/reference/v2.8/" target="_blank"> Facebook</a></li>
+					<li><a href="https://dev.twitter.com/rest/tools/console" target="_blank">Twitter</a></li>
+					<li><a href="https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=33.969638,-118.416276&rankby=distance&types=food&key=AIzaSyAQMOf3fDXsQFDgWNEKYmK-v7GCsoxaj3E" target="_blank">Google Map</a></li>
+				</ul>
+				<aside class="notes">
+					There are many REST APIs out there. <br>
+					Facebook API (Graph): Graph Explorer (/sciug/posts). It pulls all SCIUG posts. <br><br>
+
+					Google Map Place API: with longiture,latitude,rankby,types, it will return useful place data (food place around Loyala Marymount University campus).
+
+
+				</aside>
+
+			</section>
+			<section>
+				<h2>Why REST APIS:</h2>
+				<h3>Access to Existing Data </h3>
+				<p>(e.g. Sierra Patron Records)</p>				
+				<img src="./images/California_Clipper_500.jpg">
+				<aside class="notes">
+					Finally, let me finish this session with sharing my thought on why REST is so popular today. The first thing is accessiblity to existing data. Data is so valuable today and will be more so in the future. Digital data is accumulating with the greatest speed in human history. We saw that those zillion valuable data is available "for free" through many REST API services, like the ones from Google, Facebook, and Twitter. It reminds me of the 19th century Gold Rush, when many poeple believed in California Dream. People endeavored a long journey to serach for golds in hills and rivers. Somebody may try to build data from fresh start. However, if those data is freely available, do we need to build them again?<br>
+				</aside>
+			</section>
+			<section>
+				<h2>Why REST APIS:</h2>
+				<h3>Reuse the data in different apps </h3>
+				<p>(e.g. Patron Authorization Web App)</p>				
+				<img src="./images/data-garden.jpg">
+				<aside class="notes">
+					Second, reusing the same data in different apps is smart. The data will be totally transformed in a new context. Data is like seed. It can be replanted in different gardens and can flurish in a new form with unique beauty. Like this vertical garden (Vertical Garden at CaixaForum in Madrid, by Patrick Breen). Reusing ready-available data, we can also quickly build a new app for other purposes.
+				</aside>
+			</section>
+			<section>
+				<h2>Why REST APIS:</h2>
+				<h3>Integrate different systems</h3>
+				<p>(e.g. LibCal/LibAuth and Sierra)</p>
+				<img src="./images/openLibraryStack.png">
+				<aside class="notes">
+					Third, when data being shared, the systems that share the same data are being more closely integrated. As you know, last year at the annual conference, Innovative introduced "Open Library Stack". After aquiring many products, they planned to consolidate those different products based on APIs. They also open the data to the third party. This will certainly produce an econsystem that Sierra data can be consumed by different product,as our library did with LibCal.   
+				</aside>
+			</section>
+
+			<section>
+				<h1>The End</h1>
+			</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
